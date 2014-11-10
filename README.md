@@ -37,3 +37,11 @@ class Proxy < Goliath::API
 end
 ```
 
+
+Optionally you can add an exception list
+
+```ruby
+use Goliath::Rack::ReverseProxy, base_url: 'http://localhost:3000', except: ['/events/']
+```
+
+Any URI starting with '/events/' will be handled by the goliath server and everything else will be reverse proxied as normal.
