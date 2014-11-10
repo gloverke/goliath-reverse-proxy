@@ -1,4 +1,5 @@
 require 'em-synchrony/em-http'
+require "json"
 
 module Goliath
   module Rack
@@ -7,23 +8,33 @@ module Goliath
 
       def initialize(app, options)
         @app = app
+        options[:except] ||= []
+        @exceptions = options[:except]
         @connection = EM::HttpRequest.new(options[:base_url])
       end
 
       def call(env)
-        connection = @connection.dup
-        super(env, connection)
+        exception = false
+        @exceptions.each do |base|
+          exception ||= env['REQUEST_URI'].start_with?(base) && env['REQUEST_METHOD'].eql?('GET')
+        end
+        connection =  @connection.dup
+        super(env, connection, exception)
       end
 
-      def post_process(env, status, headers, body, connection)
-        method = env['REQUEST_METHOD'].downcase.to_sym
+      def post_process(env, status, headers, body, connection, exception)
+        if exception
+          [status, headers, body]
+        else
+          method = env['REQUEST_METHOD'].downcase.to_sym
 
-        options = {:head => request_headers(env, headers), :path => env['REQUEST_URI']}
-        options[:body] = env['params'] if [:put, :post, :patch].include? method
+          options = {:head => request_headers(env, headers), :path => env['REQUEST_URI']}
+          options[:body] = env['params'] if [:put, :post, :patch].include? method
 
-        http = connection.send(method, options)
+          http = connection.send(method, options)
 
-        [http.response_header.status, http.response_header.raw, [http.response]]
+          [http.response_header.status, http.response_header.raw, [http.response]]
+        end
       end
 
       def request_headers(env, headers)

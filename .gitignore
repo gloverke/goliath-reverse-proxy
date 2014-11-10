@@ -2,3 +2,5 @@
 *.gem
 .bundle
 spec/reports
+.idea/
+goliath-reverse-proxy.iml
