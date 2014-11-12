@@ -2,9 +2,9 @@ require 'rubygems'
 
 Gem::Specification.new do |gem|
   gem.name      = 'goliath-reverse-proxy'
-  gem.version   = '0.2.1'
-  gem.authors   = ["Daniel Farrell"]
-  gem.email     = 'danielfarrell76@gmail.com'
+  gem.version   = '0.2.2'
+  gem.authors   = ["Daniel Farrell","Kris Glover"]
+  gem.email     = 'gloverkcn@gmail.com'
   gem.homepage  = 'https://github.com/danielfarrell/goliath-reverse-proxy'
   gem.summary   = 'Reverse proxy middlware for Goliath'
   gem.files         = `git ls-files`.split("\n")
